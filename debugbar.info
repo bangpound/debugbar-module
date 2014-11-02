@@ -1,0 +1,9 @@
+name = Debug Bar
+core = 7.x
+dependencies[] = composer_manager
+dependencies[] = pimple
+files[] = lib/DrupalDebugbarServiceProvider.php
+files[] = lib/DrupalHttpDriver.php
+files[] = lib/DrupalTimeDataCollector.php
+files[] = lib/DrupalDbTngCollector.php
+files[] = lib/GlobalsConfigCollector.php

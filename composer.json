@@ -1,0 +1,5 @@
+{
+    "require": {
+        "bangpound/debugbar-service-provider": "~1.0@dev"
+    }
+}

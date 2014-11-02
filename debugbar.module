@@ -1,0 +1,116 @@
+<?php
+
+/**
+ * Implements hook_init().
+ */
+function debugbar_init() {
+  $c = pimple_get_container('debugbar');
+  $c['debugbar'];
+}
+
+/**
+ * Implements hook_menu().
+ */
+function debugbar_menu() {
+  $items['debugbar/open'] = array(
+    'title' => 'Debugbar',
+    'page callback' => 'debugbar_open',
+    'page arguments' => array(null, true, true),
+    'access arguments' => array('access content'),
+    'file' => 'debugbar.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function debugbar_page_build(&$page) {
+  $c = pimple_get_container('debugbar');
+    $page['page_bottom']['debugbar'] = array(
+    'debugbar' => array('#markup' => \DebugBar\JavascriptRenderer::REPLACEABLE_TAG),
+  );
+}
+
+/**
+ *  Implements hook_page_delivery_callback_alter().
+ */
+function debugbar_page_delivery_callback_alter(&$callback) {
+  if ($callback === 'ajax_deliver') {
+    $c = pimple_get_container('debugbar');
+    $c['debugbar.renderer']->render(false);
+  }
+}
+
+/**
+ * Implements hook_process_html().
+ */
+function debugbar_process_html(&$variables) {
+  $c = pimple_get_container('debugbar');
+  $variables['head'] = $c['debugbar.renderer']->renderHead() . $variables['head'];
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function debugbar_form_alter(&$form, &$form_state, $form_id) {
+  $c = pimple_get_container('debugbar');
+  $collector = new \DebugBar\DataCollector\ConfigCollector(array('form' => $form, 'form_state' => $form_state), $form_id);
+  $c['debugbar']->addCollector($collector);
+}
+
+/**
+ *  Implements hook_watchdog().
+ */
+function debugbar_watchdog(array $log_entry) {
+  global $base_url;
+  static $level_map = array(
+    WATCHDOG_EMERGENCY => \Psr\Log\LogLevel::EMERGENCY,
+    WATCHDOG_ALERT => \Psr\Log\LogLevel::ALERT,
+    WATCHDOG_CRITICAL => \Psr\Log\LogLevel::CRITICAL,
+    WATCHDOG_ERROR => \Psr\Log\LogLevel::ERROR,
+    WATCHDOG_WARNING => \Psr\Log\LogLevel::WARNING,
+    WATCHDOG_NOTICE => \Psr\Log\LogLevel::NOTICE,
+    WATCHDOG_INFO => \Psr\Log\LogLevel::INFO,
+    WATCHDOG_DEBUG => \Psr\Log\LogLevel::DEBUG,
+  );
+
+  $c = pimple_get_container('debugbar');
+  $debugbar = $c['debugbar'];
+
+  $message = strip_tags(!isset($log_entry['variables']) ? $log_entry['message'] : strtr($log_entry['message'], $log_entry['variables']));
+
+  $debugbar['messages']->log($level_map[$log_entry['severity']], $message, $log_entry);
+}
+
+/**
+ * Implements hook_drupal_goto_alter().
+ */
+function debugbar_drupal_goto_alter($path, $options, $http_response_code) {
+  if (isset($path)) {
+    $c = pimple_get_container('debugbar');
+    /** @var \DebugBar\DebugBar $debugbar */
+    $debugbar = $c['debugbar'];
+    if (!$debugbar->getHttpDriver()->isSessionStarted()) {
+      drupal_session_start();
+    }
+    $debugbar->stackData();
+  }
+}
+
+/**
+ * Implements hook_page_alter().
+ */
+function debugbar_page_alter(&$page) {
+  $page['#post_render'][] = 'debugbar_page_token_processing';
+}
+
+/**
+ * Post-render function inserts debugbar as late as possible.
+ */
+function debugbar_page_token_processing($children, $elements) {
+  $c = pimple_get_container('debugbar');
+  $replace_pairs = array(\DebugBar\JavascriptRenderer::REPLACEABLE_TAG => $c['debugbar.renderer']->render());
+  return strtr($children, $replace_pairs);
+}
