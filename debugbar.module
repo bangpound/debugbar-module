@@ -27,8 +27,7 @@ function debugbar_menu() {
  * Implements hook_page_build().
  */
 function debugbar_page_build(&$page) {
-  $c = pimple_get_container('debugbar');
-    $page['page_bottom']['debugbar'] = array(
+  $page['page_bottom']['debugbar'] = array(
     'debugbar' => array('#markup' => \DebugBar\JavascriptRenderer::REPLACEABLE_TAG),
   );
 }
