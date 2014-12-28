@@ -1,5 +1,15 @@
 {
+    "name": "drufony/debugbar-module",
+    "description": "Debugbar integration for Drupal 7",
+    "license": "GPL-2.0+",
+    "type": "drupal-module",
     "require": {
+        "drufony/pimple-module": "~7.0@dev",
         "bangpound/debugbar-service-provider": "~1.0@dev"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "7.0.x-dev"
+        }
     }
 }
