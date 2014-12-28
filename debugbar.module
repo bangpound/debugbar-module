@@ -4,7 +4,7 @@
  * Implements hook_init().
  */
 function debugbar_init() {
-  $c = pimple_get_container('debugbar');
+  $c = pimple_get_container();
   $c['debugbar'];
 }
 
@@ -38,7 +38,7 @@ function debugbar_page_build(&$page) {
  */
 function debugbar_page_delivery_callback_alter(&$callback) {
   if ($callback === 'ajax_deliver') {
-    $c = pimple_get_container('debugbar');
+    $c = pimple_get_container();
     $c['debugbar.renderer']->render(false);
   }
 }
@@ -47,7 +47,7 @@ function debugbar_page_delivery_callback_alter(&$callback) {
  * Implements hook_process_html().
  */
 function debugbar_process_html(&$variables) {
-  $c = pimple_get_container('debugbar');
+  $c = pimple_get_container();
   $variables['head'] = $c['debugbar.renderer']->renderHead() . $variables['head'];
 }
 
@@ -55,7 +55,7 @@ function debugbar_process_html(&$variables) {
  * Implements hook_form_alter().
  */
 function debugbar_form_alter(&$form, &$form_state, $form_id) {
-  $c = pimple_get_container('debugbar');
+  $c = pimple_get_container();
   $collector = new \DebugBar\DataCollector\ConfigCollector(array('form' => $form, 'form_state' => $form_state), $form_id);
   $c['debugbar']->addCollector($collector);
 }
@@ -76,7 +76,7 @@ function debugbar_watchdog(array $log_entry) {
     WATCHDOG_DEBUG => \Psr\Log\LogLevel::DEBUG,
   );
 
-  $c = pimple_get_container('debugbar');
+  $c = pimple_get_container();
   $debugbar = $c['debugbar'];
 
   $message = strip_tags(!isset($log_entry['variables']) ? $log_entry['message'] : strtr($log_entry['message'], $log_entry['variables']));
@@ -89,7 +89,7 @@ function debugbar_watchdog(array $log_entry) {
  */
 function debugbar_drupal_goto_alter($path, $options, $http_response_code) {
   if (isset($path)) {
-    $c = pimple_get_container('debugbar');
+    $c = pimple_get_container();
     /** @var \DebugBar\DebugBar $debugbar */
     $debugbar = $c['debugbar'];
     if (!$debugbar->getHttpDriver()->isSessionStarted()) {
@@ -110,7 +110,7 @@ function debugbar_page_alter(&$page) {
  * Post-render function inserts debugbar as late as possible.
  */
 function debugbar_page_token_processing($children, $elements) {
-  $c = pimple_get_container('debugbar');
+  $c = pimple_get_container();
   $replace_pairs = array(\DebugBar\JavascriptRenderer::REPLACEABLE_TAG => $c['debugbar.renderer']->render());
   return strtr($children, $replace_pairs);
 }
