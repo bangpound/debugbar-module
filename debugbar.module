@@ -63,7 +63,6 @@ function debugbar_form_alter(&$form, &$form_state, $form_id) {
  *  Implements hook_watchdog().
  */
 function debugbar_watchdog(array $log_entry) {
-  global $base_url;
   static $level_map = array(
     WATCHDOG_EMERGENCY => \Psr\Log\LogLevel::EMERGENCY,
     WATCHDOG_ALERT => \Psr\Log\LogLevel::ALERT,
