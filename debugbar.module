@@ -12,6 +12,13 @@ function debugbar_init() {
  * Implements hook_menu().
  */
 function debugbar_menu() {
+  $items['debugbar/asset'] = array(
+    'title' => 'Debugbar',
+    'page callback' => 'debugbar_asset',
+    'access arguments' => array('access php debug bar'),
+    'file' => 'debugbar.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
   $items['debugbar/open'] = array(
     'title' => 'Debugbar',
     'page callback' => 'debugbar_open',
