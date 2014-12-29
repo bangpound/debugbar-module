@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function debugbar_schema() {
+  $schema = array();
+  $schema['phpdebugbar'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'char',
+        'length' => 32,
+        'not null' => TRUE,
+      ),
+      'data' => array(
+        'type' => 'blob',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+      'meta_utime' => array(
+        'type' => 'numeric',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'precision' => '14',
+        'scale' => '4',
+      ),
+      'meta_datetime' => array(
+        'type' => 'datetime',
+        'mysql_type' => 'datetime',
+        'pgsql_type' => 'timestamp without time zone',
+        'sqlite_type' => 'varchar',
+        'sqlsrv_type' => 'smalldatetime',
+        'not null' => TRUE,
+      ),
+      'meta_uri' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'default' => '',
+      ),
+      'meta_ip' => array(
+        'type' => 'varchar',
+        'length' => 40,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'meta_method' => array(
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'indexes' => array(
+      'idx_debugbar_meta_utime' => array('meta_utime'),
+      'idx_debugbar_meta_datetime' => array('meta_datetime'),
+      'idx_debugbar_meta_uri' => array('meta_uri'),
+      'idx_debugbar_meta_ip' => array('meta_ip'),
+      'idx_debugbar_meta_method' => array('meta_method'),
+    ),
+    'primary key' => array('id'),
+  );
+  return $schema;
+}
