@@ -58,6 +58,11 @@ class DrupalDebugbarServiceProvider implements \Pimple\ServiceProviderInterface
         $pimple['debugbar.storage.drupal'] = function ($c) {
             return new \DebugBar\Storage\PdoStorage($c['drupal.pdo']);
         };
+
+        $pimple['debugbar.storage.file'] = function ($c) {
+            return new \DebugBar\Storage\FileStorage('var://debugbar');
+        };
+
         $pimple->extend('debugbar', function (\DebugBar\DebugBar $debugbar, \Pimple\Container $c) {
               $debugbar->setStorage($c['debugbar.storage.drupal']);
               $debugbar->setHttpDriver($c['debugbar.http_driver.drupal']);
