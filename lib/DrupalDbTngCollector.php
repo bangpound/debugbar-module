@@ -3,7 +3,6 @@
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
-use DebugBar\DataCollector\TimeDataCollector;
 
 /**
  * Collects data about SQL statements executed with PDO
@@ -36,9 +35,11 @@ class DrupalDbTngCollector extends DataCollector implements Renderable, AssetPro
             $pdodata = $this->collectPDO($name);
             $data['nb_statements'] += $pdodata['nb_statements'];
             $data['statements'] = array_merge($data['statements'],
-              array_map(function ($s) use ($name) { $s['connection'] = $name;
+              array_map(function ($s) use ($name) {
+                $s['connection'] = $name;
 
-return $s; }, $pdodata['statements']));
+                return $s;
+              }, $pdodata['statements']));
         }
 
         return $data;
@@ -47,8 +48,6 @@ return $s; }, $pdodata['statements']));
     /**
      * Collects data from a single TraceablePDO instance
      *
-     * @param  TraceablePDO      $pdo
-     * @param  TimeDataCollector $timeCollector
      * @return array
      */
     protected function collectPDO($name)
