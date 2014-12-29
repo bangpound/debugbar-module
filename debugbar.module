@@ -16,11 +16,22 @@ function debugbar_menu() {
     'title' => 'Debugbar',
     'page callback' => 'debugbar_open',
     'page arguments' => array(null, true, true),
-    'access arguments' => array('access content'),
+    'access arguments' => array('access php debug bar'),
     'file' => 'debugbar.pages.inc',
     'type' => MENU_CALLBACK,
   );
   return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function debugbar_permission() {
+  return array(
+    'access php debug bar' =>  array(
+      'title' => t('Access PHP Debug Bar'),
+    ),
+  );
 }
 
 /**
