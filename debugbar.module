@@ -45,7 +45,10 @@ function debugbar_permission() {
  */
 function debugbar_page_build(&$page) {
   $page['page_bottom']['debugbar'] = array(
-    'debugbar' => array('#markup' => \DebugBar\JavascriptRenderer::REPLACEABLE_TAG),
+    'debugbar' => array(
+      '#markup' => \DebugBar\JavascriptRenderer::REPLACEABLE_TAG,
+      '#access' => user_access('access php debug bar'),
+    ),
   );
 }
 
@@ -64,7 +67,9 @@ function debugbar_page_delivery_callback_alter(&$callback) {
  */
 function debugbar_process_html(&$variables) {
   $c = pimple_get_container();
-  $variables['head'] = $c['debugbar.renderer']->renderHead() . $variables['head'];
+  if (user_access('access php debug bar')) {
+    $variables['head'] = $c['debugbar.renderer']->renderHead() . $variables['head'];
+  }
 }
 
 /**
