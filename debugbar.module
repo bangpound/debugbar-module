@@ -12,10 +12,10 @@ function debugbar_init() {
  * Implements hook_menu().
  */
 function debugbar_menu() {
-  $items['debugbar/asset'] = array(
+  $items['vendor/maximebf/debugbar/src/DebugBar/Resources'] = array(
     'title' => 'Debugbar',
     'page callback' => 'debugbar_asset',
-    'access arguments' => array('access php debug bar'),
+    'access callback' => TRUE,
     'file' => 'debugbar.pages.inc',
     'type' => MENU_CALLBACK,
   );

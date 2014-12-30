@@ -10,8 +10,6 @@ function debugbar_pimple_info_alter(&$info) {
       array(
         new \Bangpound\Provider\DebugbarServiceProvider(),
         array(
-          'debugbar.base_url' => base_path() .'debugbar/asset',
-          'debugbar.base_path' => null,
         ),
       ),
     );
