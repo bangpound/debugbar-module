@@ -29,34 +29,12 @@ class DrupalDebugbarServiceProvider implements \Pimple\ServiceProviderInterface
             return new GlobalsConfigCollector();
         };
 
-        $pimple['drupal.pdo'] = function ($c) {
-            $connection_info = \Database::getConnectionInfo();
-            $connection_options = $connection_info['default'];
-
-            // The DSN should use either a socket or a host/port.
-            if (isset($connection_options['unix_socket'])) {
-                $dsn = 'mysql:unix_socket='.$connection_options['unix_socket'];
-            } else {
-                // Default to TCP connection on port 3306.
-                $dsn = 'mysql:host='.$connection_options['host'].';port='.(empty($connection_options['port']) ? 3306 : $connection_options['port']);
-            }
-            $dsn .= ';dbname='.$connection_options['database'];
-            // Allow PDO options to be overridden.
-            $connection_options += array(
-              'pdo' => array(),
-            );
-            $connection_options['pdo'] += array(
-                // So we don't have to mess around with cursors and unbuffered queries by default.
-              PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => TRUE,
-                // Because MySQL's prepared statements skip the query cache, because it's dumb.
-              PDO::ATTR_EMULATE_PREPARES => TRUE,
-            );
-
-            return new PDO($dsn, $connection_options['username'], $connection_options['password'], $connection_options['pdo']);
-        };
-
         $pimple['debugbar.storage.drupal'] = function ($c) {
-            return new \DebugBar\Storage\PdoStorage($c['drupal.pdo']);
+
+            /** @var \PDO $pdo */
+            $pdo = $c['db']->getWrappedConnection();
+
+            return new \DebugBar\Storage\PdoStorage($pdo);
         };
 
         $pimple['debugbar.storage.file'] = function ($c) {
